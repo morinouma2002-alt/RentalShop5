@@ -4,14 +4,17 @@ import java.util.List;
 import java.util.Scanner;
 
 import Guest.Guest;
+import Guest.postponeGuest;
 
 public class Manager extends AiManager {
+	
 
 	public Manager(String name, int key, ZaikoKanri zaiko, Scanner sc) {
 		super(name, key, zaiko, sc);
+
 	}
 
-	public void printCheck() {
+	public void printCheck(List<Guest> list) {
 
 		boolean found = true;
 
@@ -36,6 +39,12 @@ public class Manager extends AiManager {
 				printCheckRegister();
 			}
 			case 3 -> boss.checkAssets();
+
+			case 4 -> {
+				System.out.println("延滞客をチェックする");
+				printCheckEntai(list);
+			}
+
 			case 5 -> found = false;
 			default -> System.out.println("１から５選んでださい");
 			}
@@ -45,7 +54,7 @@ public class Manager extends AiManager {
 
 	public void printCheckRegister() {
 
-		List<Guest> getRegisterList = boss.registerGuest;
+		List<Guest> getRegisterList = boss.getRegisterGuest();
 		if (getRegisterList.size() == 0) {
 			System.out.println("登録者はいません");
 			return;
@@ -58,6 +67,29 @@ public class Manager extends AiManager {
 			Guest guest = getRegisterList.get(i);
 			//続き
 			guest.displayRegister();
+		}
+	}
+	
+	public void printCheckEntai(List<Guest>list) {
+		if (list.size() == 0) {
+			System.out.println("客はいない");
+			return;
+		}
+		
+		boolean caseFound4=true;//ローカル変数にする
+		System.out.println("延滞客は");
+		
+		for (int i = 0; i < list.size(); i++) {
+			Guest guest =list.get(i);
+			
+			if(guest instanceof postponeGuest) {
+				caseFound4 =false;
+				System.out.println(guest.getName()+"さん");
+			}
+		}
+		
+		if(caseFound4) {
+			System.out.println("当てはまる人は、居ませんでした");
 		}
 	}
 }

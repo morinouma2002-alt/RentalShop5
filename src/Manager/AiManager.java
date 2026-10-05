@@ -9,14 +9,14 @@ import Guest.Guest;
 
 public class AiManager {
 
-	protected long assets = 0;//資産
+	private long assets = 0;//資産
 
 	//AiMangerに社員の個人情報を管理させる
 	private String employeeName;
 	private int employeeId;
 	private List<AiManager> listManager = new ArrayList<>();//社員のリスト
 	
-	protected List<Guest> registerGuest =new ArrayList<>();//会員登録者をためる
+	private List<Guest> registerGuest =new ArrayList<>();//会員登録者をためる
 
 	protected int[] price = { 150, 100, 50 };
 
@@ -34,6 +34,10 @@ public class AiManager {
 		this.sc = sc;
 	}
 	
+	public List<Guest> getRegisterGuest(){
+		return registerGuest;
+	}
+	
 	public long getAssets() {
 		return assets;
 	} 
@@ -49,7 +53,7 @@ public class AiManager {
 		listManager.add(manager);
 	}
 
-	public void checkEmployee(Scanner sc) {
+	public void checkEmployee(Scanner sc,List<Guest> list) {
 
 		System.out.println("名前とidを入力してください");
 		String name = sc.next();
@@ -62,7 +66,9 @@ public class AiManager {
 				System.out.println("何かをチェックしますか?");
 
 				if (man instanceof Manager mama) {
-					mama.printCheck();
+					mama.printCheck(list);
+				}else {
+					System.out.println("確認できる、権限はない");
 				}
 
 				return;

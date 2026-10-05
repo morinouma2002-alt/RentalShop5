@@ -56,4 +56,8 @@ public class EndDay implements Menu {
 	public Guest productGuest(List<Guest> list) {
 		return null;
 	}
+	
+	public List<Guest> getList(){
+		return list;
+	}
 }

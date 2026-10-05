@@ -77,7 +77,7 @@ public class TopMenu implements Menu {
 			case 8 -> {
 
 				System.out.println("関係者ですか?");
-			    ai.checkEmployee(sc);
+			    ai.checkEmployee(sc,list);
 				
 			}
 
