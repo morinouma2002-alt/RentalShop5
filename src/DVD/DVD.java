@@ -48,6 +48,10 @@ public class DVD {
 	public int getValue() {
 		return value;
 	}
+	
+	public String getDirec() {
+		return direc;
+	}
 
 	public boolean getRented() {
 		return rented;

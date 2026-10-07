@@ -4,15 +4,15 @@ import java.util.Scanner;
 
 import DVD.DVD;
 import Guest.Guest;
-import Manager.AiManager;
+import Manager.Shop;
 import Manager.ZaikoKanri;
 public class RentalMenu implements Menu {
 
 	private ZaikoKanri zaiko;
 	private Guest guest =null;
-	private AiManager manager;
+	private Shop manager;
 	
-	public RentalMenu(ZaikoKanri zaiko,Guest guest,AiManager manager) {
+	public RentalMenu(ZaikoKanri zaiko,Guest guest,Shop manager) {
 		this.zaiko = zaiko;
 		this.guest=guest;
 		this.manager=manager;
@@ -39,7 +39,8 @@ public class RentalMenu implements Menu {
 			dvd[i].display();
 		}
 
-		int n = sc.nextInt() - 1;
+		//ユーティリティーティ　クラス　ちぇえくユーティリティー
+		int n = InputHelper.readInt(sc, 1, dvd.length) - 1;//範囲外は入力し直し
 
 		DVD dOne =dvd[n]; //dOneで一商品取り出している
 		

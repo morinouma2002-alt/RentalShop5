@@ -17,8 +17,8 @@ public class Guest {
 	//始めは、未会員登録
 	protected boolean register = false;
 
-	//始めは、falseで通常客として処理する
-	private boolean overDue = false;
+	//客の状態はこの1つだけで管理する。始めは通常客
+	private GuestStatus status = GuestStatus.NORMAL;
 
 	//guestが借りた、商品を貯める
 	protected List<DVD> dvdSave = new ArrayList<>();
@@ -27,19 +27,27 @@ public class Guest {
 		this.name = name;
 	}
 
-	public Guest(Guest other) {
-		this.name = other.name;
-		this.register = other.register;
-		this.overDue = other.overDue;//★★　clearOverdue()の必要な部分
-		this.dvdSave = other.dvdSave;//同じリストを引き継ぐ
-	}
-
 	public List<DVD> getDvdSave() {
 		return dvdSave;
 	}
 
+	//通常客のときだけ借りられる
 	public boolean canRent() {
-		return true;
+		return status == GuestStatus.NORMAL;
+	}
+
+	public GuestStatus getStatus() {
+		return status;
+	}
+
+	//延滞客にする（同じ客のまま状態だけ変える）
+	public void postpone() {
+		status = GuestStatus.POSTPONE;
+	}
+
+	//通常客に戻す
+	public void clearPostpone() {
+		status = GuestStatus.NORMAL;
 	}
 
 	public boolean getResister() {
@@ -54,18 +62,9 @@ public class Guest {
 		this.register = true;
 	}
 
-	public void clearOverDue() {
-		overDue = false;
-	}
-
-	public boolean getOverDue() {
-		return overDue;
-	}
-
 	public void checkOverDay(DVD dvd) {
-		boolean found = dvd.getOverDay();
-		if (found == true) {
-			overDue = found;//延滞客に分類された
+		if (dvd.getOverDay()) {
+			postpone();//延滞客に分類された
 		}
 	}
 
@@ -85,7 +84,7 @@ public class Guest {
 				}
 			}
 
-			if (overDue) {
+			if (status == GuestStatus.POSTPONE) {
 				System.out.println("延滞客");
 			} else {
 				System.out.println("通常客");

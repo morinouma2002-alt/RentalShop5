@@ -1,7 +1,8 @@
 import java.util.Scanner;
 
-import Manager.AiManager;
+import Manager.Employee;
 import Manager.Manager;
+import Manager.Shop;
 import Manager.ZaikoKanri;
 import Screen.TopMenu;
 
@@ -14,17 +15,15 @@ public class SystemMain {
 		//在庫を読み込む
 		ZaikoKanri zaikokanri = new ZaikoKanri();
 
-		AiManager ai = new AiManager("管理者", 0,zaikokanri,sc);
+		Shop ai = new Shop(zaikokanri,sc);
 	
 
-		Manager[] manager = { new Manager("太郎", 1000,zaikokanri,sc) };
+		Employee[] employees = { new Manager("太郎", 1000,zaikokanri,sc,ai),new Employee("山田",1001,sc,ai)};
 
-		for (int i = 0; i < manager.length; i++) {
-			AiManager man = manager[i];//継承関係あるので、AIManagerでいける
+		for (int i = 0; i < employees.length; i++) {
+			Employee emp = employees[i];
 			
-			//manは　AiManager型　実体Manager型
-			
-			ai.setManager(man);//管理者が社員を管理する
+			ai.setEmployee(emp);//Shopが社員を管理する
 		}
 
 		TopMenu topMenu = new TopMenu(zaikokanri, sc, ai);

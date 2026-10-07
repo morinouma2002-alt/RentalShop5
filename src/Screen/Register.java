@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Scanner;
 
 import Guest.Guest;
-import Manager.AiManager;
+import Manager.Shop;
 
 public class Register implements Menu {
 
 	private Guest guest;
-	private AiManager ai;
+	private Shop ai;
 
-	public Register(Guest guest,AiManager ai) {
+	public Register(Guest guest,Shop ai) {
 
 		this.guest = guest;
 		this.ai=ai;
@@ -26,7 +26,7 @@ public class Register implements Menu {
 				""";
 		System.out.println(textBlock);
 
-		boolean register = sc.next().equals("YES");
+		boolean register = sc.nextLine().trim().equals("YES");
 
 		if (register) {
 			System.out.println("登録します");

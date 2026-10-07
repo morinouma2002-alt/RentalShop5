@@ -3,92 +3,80 @@ package Manager;
 import java.util.List;
 import java.util.Scanner;
 
+import DVD.DVD;
 import Guest.Guest;
-import Guest.postponeGuest;
+import Guest.GuestStatus;
+import Screen.InputHelper;
 
-public class Manager extends AiManager {
-	
+public class Manager extends Employee {
 
-	public Manager(String name, int key, ZaikoKanri zaiko, Scanner sc) {
-		super(name, key, zaiko, sc);
+	private ZaikoKanri zaiko;
 
+	public Manager(String name, int id, ZaikoKanri zaiko, Scanner sc, Shop shop) {
+		super(name, id, sc, shop);
+		this.zaiko = zaiko;
 	}
 
+	@Override
 	public void printCheck(List<Guest> list) {
 
+		System.out.println("----店長----");
 		boolean found = true;
 
 		while (found) {
 
 			String textBlock = """
 					1,在庫チェック
-					2,会員登録者をチェック
-					3,売上をチェックする
-					4,延滞客を見る
-					5,以上は終了
+					2,売上をチェックする
+					3,延滞客を見る
+					4,以上は終了
 					""";
 
 			System.out.println(textBlock);
-			int n = sc.nextInt();
+			int n = InputHelper.readInt(sc, 1, 4);
 
 			switch (n) {
 			case 1 -> checkZaiko();
+			case 2 -> shop.checkAssets();
 
-			//case 2から続き
-			case 2 -> {
-				printCheckRegister();
-			}
-			case 3 -> boss.checkAssets();
-
-			case 4 -> {
+			case 3 -> {
 				System.out.println("延滞客をチェックする");
 				printCheckEntai(list);
 			}
 
-			case 5 -> found = false;
-			default -> System.out.println("１から５選んでださい");
+			case 4 -> found = false;
+			default -> System.out.println("1から4選んでださい");
 			}
 
 		}
 	}
 
-	public void printCheckRegister() {
-
-		List<Guest> getRegisterList = boss.getRegisterGuest();
-		if (getRegisterList.size() == 0) {
-			System.out.println("登録者はいません");
-			return;
-		}
-
-		System.out.println("登録者の情報を提供します");
-		System.out.println("----会員登録者リスト----");
-
-		for (int i = 0; i < getRegisterList.size(); i++) {
-			Guest guest = getRegisterList.get(i);
-			//続き
-			guest.displayRegister();
+	private void checkZaiko() {
+		DVD[] dvd = zaiko.getDVD();
+		for (DVD d : dvd) {
+			d.display();
 		}
 	}
-	
-	public void printCheckEntai(List<Guest>list) {
+
+	private void printCheckEntai(List<Guest> list) {
 		if (list.size() == 0) {
 			System.out.println("客はいない");
 			return;
 		}
-		
-		boolean caseFound4=true;//ローカル変数にする
+
+		boolean found = false;//延滞客が見つかったか
 		System.out.println("延滞客は");
-		
+
 		for (int i = 0; i < list.size(); i++) {
-			Guest guest =list.get(i);
-			
-			if(guest instanceof postponeGuest) {
-				caseFound4 =false;
-				System.out.println(guest.getName()+"さん");
+			Guest guest = list.get(i);
+
+			if (guest.getStatus() == GuestStatus.POSTPONE) {
+				found = true;
+				System.out.println(guest.getName() + "さん");
 			}
 		}
-		
-		if(caseFound4) {
+
+		if (!found) {
 			System.out.println("当てはまる人は、居ませんでした");
 		}
 	}

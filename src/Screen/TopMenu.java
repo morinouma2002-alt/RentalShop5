@@ -5,17 +5,17 @@ import java.util.List;
 import java.util.Scanner;
 
 import Guest.Guest;
-import Guest.normalGuest;
-import Manager.AiManager;
+import Manager.Employee;
+import Manager.Shop;
 import Manager.ZaikoKanri;
 
 public class TopMenu implements Menu {
 
 	private ZaikoKanri zaiko;
 	private Scanner sc;
-	private AiManager ai;
+	private Shop ai;
 
-	public TopMenu(ZaikoKanri zaikoKanri, Scanner sc, AiManager manager) {
+	public TopMenu(ZaikoKanri zaikoKanri, Scanner sc, Shop manager) {
 		this.zaiko = zaikoKanri;
 		this.sc = sc;
 		this.ai = manager;
@@ -49,42 +49,52 @@ public class TopMenu implements Menu {
 
 			System.out.println(text);
 
-			int select = sc.nextInt();
+			int select = InputHelper.readInt(sc, 1, 9);
 
 			//続き
 			switch (select) {
 			case 1 -> dispSubMenu(new RentalMenu(zaiko, guest, ai));
-			case 2 -> {
-
-				ReturnMenu ret = new ReturnMenu(guest, ai, list);
-				dispSubMenu(ret);
-				guest = ret.getResult();//入れ替わった客を受け取る
-
-			}
+			case 2 -> dispSubMenu(new ReturnMenu(guest, ai));
 			case 3 -> dispSubMenu(new Search(guest, zaiko));
-			case 4 -> dispSubMenu(new Register(guest,ai));
+			case 4 -> dispSubMenu(new Register(guest, ai));
 			case 5 -> dispSubMenu(new Check(guest));
 			case 6 -> guest = productGuest(list);
 
-			case 7 -> {
-
-				EndDay end = new EndDay(guest, list);
-				dispSubMenu(end);
-				guest = end.getResult(); // 差し替わった客を受け取る
-
-			}
+			case 7 -> dispSubMenu(new EndDay(guest));
 
 			case 8 -> {
 
-				System.out.println("関係者ですか?");
-			    ai.checkEmployee(sc,list);
-				
+				System.out.println("関係者ですか?"
+						+ "名前と　ID番号を入力してください");
+
+				checkStaff(list);
+
 			}
 
 			default -> found = false;
 			}
 		}
 		System.out.println("終了しました");
+
+	}
+
+	void checkStaff(List<Guest> list) {
+		System.out.println("名前を入力してください");
+		String name = InputHelper.readText(sc);
+
+		System.out.println("ID番号を入力してください");
+		int id = InputHelper.readInt(sc, 0, 999999);
+
+		//AiManagerが社員のリストをもう、もっているので　
+		//ポリモーフィズム？
+		List<Employee> listEmployee = ai.getListEmployee();
+
+		for (Employee man : listEmployee) {
+			if (man.getName().equals(name) && man.getId() == id) {
+				System.out.println("関係者");
+				man.printCheck(list);
+			}
+		}
 
 	}
 
@@ -96,7 +106,7 @@ public class TopMenu implements Menu {
 	@Override
 	public Guest productGuest(List<Guest> list) {
 		System.out.println("名前を入力してください");
-		String name = sc.next();
+		String name = InputHelper.readText(sc);
 
 		Guest guest;
 		for (Guest g : list) {
@@ -106,8 +116,8 @@ public class TopMenu implements Menu {
 			}
 		}
 
-		//始めは　normalGuestで生成する
-		guest = new normalGuest(name);
+		//始めは通常客で生成する
+		guest = new Guest(name);
 		list.add(guest);
 		return guest;
 	}

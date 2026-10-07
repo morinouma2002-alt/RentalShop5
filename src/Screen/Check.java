@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import DVD.DVD;
 import Guest.Guest;
+import Guest.GuestStatus;
 
 public class Check implements Menu{
 
@@ -34,7 +35,7 @@ public class Check implements Menu{
 		}
 		
 		
-		if(guest.getOverDue()) {
+		if(guest.getStatus() == GuestStatus.POSTPONE) {
 			System.out.println("あなたは、延滞客として処理されます");
 		}else {
 			System.out.println("通常客です");

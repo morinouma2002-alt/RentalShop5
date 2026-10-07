@@ -5,25 +5,17 @@ import java.util.Scanner;
 
 import DVD.DVD;
 import Guest.Guest;
-import Guest.normalGuest;
-import Guest.postponeGuest;
-import Manager.AiManager;
+import Guest.GuestStatus;
+import Manager.Shop;
 
 public class ReturnMenu implements Menu {
 
-	//EndDayと同じ感じにする
-	
 	private Guest guest;
-	private AiManager manager;
-	private List<Guest> list;
-	private Guest result;   // 処理後の客（TopMenu が受け取る）
+	private Shop manager;
 
-	//★★Guest guestは　normalか　postponeの可能性がある　guest変数名
-	public ReturnMenu(Guest guest, AiManager manager, List<Guest> list) {
+	public ReturnMenu(Guest guest, Shop manager) {
 		this.guest = guest;
 		this.manager = manager;
-		this.list = list;
-		this.result = guest;   // 変わらなければそのまま
 	}
 
 	@Override
@@ -42,25 +34,19 @@ public class ReturnMenu implements Menu {
 		}
 
 		System.out.println("返却するのを番号で選んでください");
-		int n = sc.nextInt() - 1;
+		int n = InputHelper.readInt(sc, 1, dvdSave.size()) - 1;//範囲外は入力し直し
 
 		DVD d = dvdSave.remove(n);
 		d.returnRented();
 
 		// 延滞客が、全部返し終わったときだけ通常客に戻す
-		if (guest instanceof postponeGuest && dvdSave.isEmpty()) {
+		if (guest.getStatus() == GuestStatus.POSTPONE && dvdSave.isEmpty()) {
 			System.out.println("延滞料として500円徴収します");
 			manager.postAssets();
 
-			Guest normal = new normalGuest(guest);//★★　コピー　自分自身を再利用
-			list.set(list.indexOf(guest), normal);
+			guest.clearPostpone();//同じ客の状態を戻すだけ
 			System.out.println("通常客に戻ります");
-			result = normal;
 		}
-	}
-
-	public Guest getResult() {
-		return result;
 	}
 
 	@Override
